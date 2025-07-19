@@ -33,21 +33,27 @@ extern float realSpeed; 									// global variable for real Speed
 extern DataSlave oDataSlave;
 extern uint8_t  wStateSlave;
 extern uint8_t  wState;
+extern float g_Kp;
+extern float g_Ki;
+extern float g_Kd;
 
-typedef struct {			// ´#pragma pack(1)´ needed to get correct sizeof()
+typedef struct {			// ï¿½#pragma pack(1)ï¿½ needed to get correct sizeof()
    uint8_t cStart;		//  = '/';
    //uint16_t cStart;		//  = #define START_FRAME         0xABCD
    int16_t  iSpeed;
    int16_t  iSteer;
    uint8_t  wStateMaster;   // 1=ledGreen, 2=ledOrange, 4=ledRed, 8=ledUp, 16=ledDown   , 32=Battery3Led, 64=Disable, 128=ShutOff
    uint8_t  wStateSlave;   // 1=ledGreen, 2=ledOrange, 4=ledRed, 8=ledUp, 16=ledDown   , 32=Battery3Led, 64=Disable, 128=ShutOff
+	 float   Kp;
+   float   Ki;
+   float   Kd;
    uint16_t checksum;
 } SerialServer2Hover;
 
 static uint8_t aReceiveBuffer[sizeof(SerialServer2Hover)];
 
 #define START_FRAME         0xABCD       // [-] Start frme definition for reliable serial communication
-typedef struct{				// ´#pragma pack(1)´ needed to get correct sizeof()
+typedef struct{				// ï¿½#pragma pack(1)ï¿½ needed to get correct sizeof()
    uint16_t cStart;
    int16_t iSpeedL;		// 100* km/h
    int16_t iSpeedR;		// 100* km/h
@@ -153,6 +159,9 @@ void RemoteCallback(void)
 			{
 				iTimeLastRx = millis();
 				speed = pData->iSpeed;
+				g_Kp = pData->Kp;
+				g_Ki = pData->Ki;
+				g_Kd = pData->Kd;
 				steer = pData->iSteer;
 				wState = pData->wStateMaster;
 				wStateSlave = pData->wStateSlave;

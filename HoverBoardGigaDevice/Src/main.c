@@ -16,6 +16,46 @@
 #include <math.h>     
 //#include "arm_math.h" 
 
+typedef struct {
+    float Kp, Ki, Kd;
+    float setpoint;
+    float integral;
+    float previous_error;
+} PIDController;
+
+void PID_Init(PIDController *pid, float Kp, float Ki, float Kd) {
+    pid->Kp = Kp;
+    pid->Ki = Ki;
+    pid->Kd = Kd;
+    pid->setpoint = 0.0f;
+    pid->integral = 0.0f;
+    pid->previous_error = 0.0f;
+}
+
+float PID_Update(PIDController *pid, float process_variable, float dt) {
+    if (dt <= 0.0f) return 0.0f; // Evita divis�o por zero
+
+    float error = pid->setpoint - process_variable;
+
+    // Termo Integral com anti-windup (limites de exemplo)
+    pid->integral += error * dt;
+    if (pid->integral > 500.0f) pid->integral = 500.0f;
+    if (pid->integral < -500.0f) pid->integral = -500.0f;
+
+    // Termo Derivativo
+    float derivative = (error - pid->previous_error) / dt;
+
+    // Sa�da do PID
+    float output = (pid->Kp * error) + (pid->Ki * pid->integral) + (pid->Kd * derivative);
+
+    pid->previous_error = error;
+
+    return output;
+}
+
+PIDController pid_speed;
+
+
 #ifdef BUZZER
 	extern uint8_t buzzerFreq;    						// global variable for the buzzer pitch. can be 1, 2, 3, 4, 5, 6, 7...
 	extern uint8_t buzzerPattern; 						// global variable for the buzzer pattern. can be 1, 2, 3, 4, 5, 6, 7...
@@ -28,6 +68,14 @@ int32_t speed = 0; 												// global variable for speed.    -1000 to 1000
 int32_t speedShutoff = 0;
 int16_t speedLimit = 1000;
 
+uint32_t last_update_tick = 0;
+int32_t last_odom = 0;
+float measured_speed = 0.0f;
+float pid_output_speed = 0.0f;
+
+float g_Kp = 0.35f; 
+float g_Ki = 0.0f;
+float g_Kd = 0.0f;
 
 
 #define STATE_LedGreen 1	
@@ -116,7 +164,7 @@ iBug = 3;
 	Interrupt_init();
 iBug = 4;	
 	// Init timeout timer
-	//TimeoutTimer_init();
+	TimeoutTimer_init();
 iBug = 5;
 	// Init GPIOs
 	GPIO_init();
@@ -219,7 +267,8 @@ iBug = 9;
 	#ifdef UPPER_LED
 		digitalWrite(UPPER_LED,RESET);
 	#endif
-iBug = 10;
+		
+		
 
 	while(1)
 	{
@@ -228,8 +277,6 @@ iBug = 10;
 		iTimeNextLoop = millis() + DELAY_IN_MAIN_LOOP;
 		steerCounter++;		// something like DELAY_IN_MAIN_LOOP = 5 ms
 		DEBUG_LedSet(	(steerCounter%20) < 10	,0)
-		//DEBUG_LedSet(	digitalRead(BUTTON)	,1)		
-		//iBug = digitalRead(BUTTON);
 		
 		
 		#ifdef MOSFET_OUT
@@ -244,6 +291,31 @@ iBug = 10;
 				RemoteUpdate();
 				//DEBUG_LedSet(RESET,0)
 			}
+			// 0. Inicializa o PID
+			PID_Init(&pid_speed, g_Kp, g_Ki, g_Kd);
+			// 1. O 'speed' recebido � o nosso setpoint (velocidade desejada)
+			#define MAX_STEPS_PER_SECOND 800.0f 
+			pid_speed.setpoint = (float)speed;
+				
+			 // 2. Calcula tempo decorrido (dt) e velocidade medida (feedback)
+			uint32_t current_tick = millis();
+			float dt = (float)(current_tick - last_update_tick) / 1000.0f;
+
+			if (dt > 0.01f) // Atualiza o controle a cada 10ms ou mais
+			{
+					// O iOdom vem do bldc.c e representa os passos do motor
+					measured_speed = (float)(iOdom - last_odom) / dt; 
+					// Faz um measured_speed para ser um valor que varia entre 0 e 1000, uma porcentagem, assim como o speed/pid_speed.setpoint
+					float scaled_measured_speed = (measured_speed / MAX_STEPS_PER_SECOND) * 1000.0f;
+
+					// 3. Calcular a sa�da do PID
+					// A sa�da � o comando de esfor�o para atingir o setpoint
+					pid_output_speed = PID_Update(&pid_speed, scaled_measured_speed, dt);
+
+					// Atualiza vari�veis para o pr�ximo ciclo
+					last_odom = iOdom;
+					last_update_tick = current_tick;
+    }
 			
 			if (speedShutoff)	speed = ShutOff();
 			
@@ -252,7 +324,7 @@ iBug = 10;
 			
 			// Each speedvalue or steervalue between 50 and -50 means absolutely no pwm
 			// -> to get the device calm 'around zero speed'
-			scaledSpeed = speed < 50 && speed > -50 ? 0 : CLAMP(speed, -speedLimit, speedLimit) * SPEED_COEFFICIENT;
+			scaledSpeed = speed < 50 && speed > -50 ? 0 : CLAMP(pid_output_speed, -speedLimit, speedLimit) * SPEED_COEFFICIENT;
 			scaledSteer = steer < 50 && steer > -50 ? 0 : CLAMP(steer, -speedLimit, speedLimit) * STEER_COEFFICIENT * expo;
 			
 			// Map to an angle of 180 degress to 0 degrees for array access (means angle -90 to 90 degrees)

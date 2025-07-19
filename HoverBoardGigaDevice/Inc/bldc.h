@@ -62,6 +62,9 @@ void bldc_get_pwm(int pwm, int pos, int *y, int *b, int *g);
 // virtual method call in the beginning of main()
 void InitBldc();
 
+extern int32_t iOdom;
+
+
 #if defined(BLDC_BC)
 	#include "../Inc/bldcBC.h"
 #elif defined(BLDC_SINE)

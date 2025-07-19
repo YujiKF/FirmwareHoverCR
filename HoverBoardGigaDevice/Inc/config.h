@@ -28,9 +28,10 @@
 
 	//#define BLDC_BC			// old block commutation bldc control
 	#define BLDC_SINE			// silent sine-pwm motor control, added 2025 by Robo Durden. 
+													// not yet for target 2  = Gen2.2.x
 	
-	#define BAT_CELLS         	10        // battery number of cells. Normal Hoverboard battery: 10s
-	//#define BATTERY_LOW_SHUTOFF		// will shut off the board below BAT_LOW_DEAD = BAT_CELLS * CELL_LOW_DEAD, 
+#define BAT_CELLS         	10        // battery number of cells. Normal Hoverboard battery: 10s
+//#define BATTERY_LOW_SHUTOFF		// will shut off the board below BAT_LOW_DEAD = BAT_CELLS * CELL_LOW_DEAD, 
 
 	//#define MASTER		// uncomment for MASTER firmware.
 	//#define SLAVE			// uncomment for SLAVE firmware.
@@ -39,8 +40,8 @@
 	#if defined(MASTER) || defined(SINGLE)
 		
 		// choose only one 'remote' to control the motor
-		#define REMOTE_DUMMY
-		//#define REMOTE_UART
+		//#define REMOTE_DUMMY
+		#define REMOTE_UART
 		//#define REMOTE_UARTBUS	// ESP32 as master and multiple boards as multiple slaves ESP.tx-Hovers.rx and ESP.rx-Hovers.tx
 		//#define REMOTE_CRSF		// https://github.com/RoboDurden/Hoverboard-Firmware-Hack-Gen2.x/issues/26
 		//#define REMOTE_ADC	// speed is PA2=TX and steer is PA3=RX of the masterslave header. Get 3.3V from the flash header
