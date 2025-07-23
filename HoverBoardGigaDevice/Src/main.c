@@ -77,6 +77,10 @@ float g_Kp = 0.35f;
 float g_Ki = 0.0f;
 float g_Kd = 0.0f;
 
+float meanspeed = 0.0f;
+
+float filtered_speed = 0.0f;
+const float a = 0.1f; // Fator de suavização (0 < a < 1). Quanto menor, mais suave.
 
 #define STATE_LedGreen 1	
 #define STATE_LedOrange 2	
@@ -268,7 +272,13 @@ iBug = 9;
 		digitalWrite(UPPER_LED,RESET);
 	#endif
 		
-		
+	#define ODOM_STEPS_TO_KMH 0.02075f
+	// 0. Inicializa o PID
+	PID_Init(&pid_speed, g_Kp, g_Ki, g_Kd);	
+	uint16_t i = 0;
+	float ten_last_odom = 0;
+	float ten_last_update_tick = 0;
+
 
 	while(1)
 	{
@@ -291,30 +301,51 @@ iBug = 9;
 				RemoteUpdate();
 				//DEBUG_LedSet(RESET,0)
 			}
-			// 0. Inicializa o PID
-			PID_Init(&pid_speed, g_Kp, g_Ki, g_Kd);
-			// 1. O 'speed' recebido � o nosso setpoint (velocidade desejada)
-			#define MAX_STEPS_PER_SECOND 800.0f 
-			pid_speed.setpoint = (float)speed;
+			#define MAX_SPEED_KMH 21.45f
+			#define C_SPEED_TO_KMH 0.02676f
+			// 1. O 'speed' recebido é o nosso setpoint (velocidade desejada)
+      pid_speed.setpoint = (float)speed * C_SPEED_TO_KMH;
+			//pid_speed.setpoint = (float)speed;
+			pid_speed.Kp = g_Kp;
+			pid_speed.Ki = g_Ki;
+      pid_speed.Kd = g_Kd;
 				
 			 // 2. Calcula tempo decorrido (dt) e velocidade medida (feedback)
 			uint32_t current_tick = millis();
 			float dt = (float)(current_tick - last_update_tick) / 1000.0f;
+			
 
 			if (dt > 0.01f) // Atualiza o controle a cada 10ms ou mais
 			{
 					// O iOdom vem do bldc.c e representa os passos do motor
-					measured_speed = (float)(iOdom - last_odom) / dt; 
+					float steps_per_second = (float)(iOdom - last_odom) / dt;
+					float raw_measured_speed = (steps_per_second) * ODOM_STEPS_TO_KMH;
+					filtered_speed = (a * raw_measured_speed) + ((1.0f - a) * filtered_speed);
+				  //measured_speed = (float)(iOdom - last_odom) / dt;	
 					// Faz um measured_speed para ser um valor que varia entre 0 e 1000, uma porcentagem, assim como o speed/pid_speed.setpoint
-					float scaled_measured_speed = (measured_speed / MAX_STEPS_PER_SECOND) * 1000.0f;
+					//float scaled_measured_speed = (measured_speed / MAX_STEPS_PER_SECOND) * 1000.0f;
 
-					// 3. Calcular a sa�da do PID
-					// A sa�da � o comando de esfor�o para atingir o setpoint
-					pid_output_speed = PID_Update(&pid_speed, scaled_measured_speed, dt);
-
-					// Atualiza vari�veis para o pr�ximo ciclo
+					// 3. Calcular a saída do PID
+					// A saída é o comando de esfor�o para atingir o setpoint
+					pid_output_speed = PID_Update(&pid_speed, -filtered_speed, dt);
+				
+					// Atualiza variáveis para o próximo ciclo
 					last_odom = iOdom;
 					last_update_tick = current_tick;
+				
+					if (i % 10 == 0) 
+				{
+            // Calcula o tempo médio e a velocidade média
+            float dt_mean = (float)(current_tick - ten_last_update_tick) / 1000.0f;
+            if (dt_mean > 0.0f) { // Evita divisão por zero
+                meanspeed = ((float)(iOdom - ten_last_odom) * ODOM_STEPS_TO_KMH) / dt_mean;
+            }
+
+            // Salva os valores atuais para o próximo cálculo médio
+            ten_last_odom = iOdom;
+            ten_last_update_tick = current_tick;
+        }
+					i++;
     }
 			
 			if (speedShutoff)	speed = ShutOff();

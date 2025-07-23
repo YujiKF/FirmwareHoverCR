@@ -10,7 +10,7 @@
       <TargetName>GD32F130</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6230000::V6.23::ARMCLANG</pCCUsed>
+      <pCCUsed>6220000::V6.22::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -465,14 +465,14 @@
           <GroupName>Inc</GroupName>
           <Files>
             <File>
-              <FileName>configSelect.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Inc\configSelect.h</FilePath>
-            </File>
-            <File>
               <FileName>config.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Inc\config.h</FilePath>
+            </File>
+            <File>
+              <FileName>configSelect.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Inc\configSelect.h</FilePath>
             </File>
             <File>
               <FileName>configDebug.h</FileName>
@@ -1178,14 +1178,14 @@
           <GroupName>Inc</GroupName>
           <Files>
             <File>
-              <FileName>configSelect.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Inc\configSelect.h</FilePath>
-            </File>
-            <File>
               <FileName>config.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Inc\config.h</FilePath>
+            </File>
+            <File>
+              <FileName>configSelect.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Inc\configSelect.h</FilePath>
             </File>
             <File>
               <FileName>configDebug.h</FileName>
@@ -1891,14 +1891,14 @@
           <GroupName>Inc</GroupName>
           <Files>
             <File>
-              <FileName>configSelect.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Inc\configSelect.h</FilePath>
-            </File>
-            <File>
               <FileName>config.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Inc\config.h</FilePath>
+            </File>
+            <File>
+              <FileName>configSelect.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Inc\configSelect.h</FilePath>
             </File>
             <File>
               <FileName>configDebug.h</FileName>
@@ -2604,14 +2604,14 @@
           <GroupName>Inc</GroupName>
           <Files>
             <File>
-              <FileName>configSelect.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Inc\configSelect.h</FilePath>
-            </File>
-            <File>
               <FileName>config.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Inc\config.h</FilePath>
+            </File>
+            <File>
+              <FileName>configSelect.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Inc\configSelect.h</FilePath>
             </File>
             <File>
               <FileName>configDebug.h</FileName>
