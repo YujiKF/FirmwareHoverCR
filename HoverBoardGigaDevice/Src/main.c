@@ -321,12 +321,12 @@ iBug = 9;
 					float steps_per_second = (float)(iOdom - last_odom) / dt;
 					float raw_measured_speed = (steps_per_second) * ODOM_STEPS_TO_KMH;
 					filtered_speed = (a * raw_measured_speed) + ((1.0f - a) * filtered_speed);
-				  //measured_speed = (float)(iOdom - last_odom) / dt;	
+				    //measured_speed = (float)(iOdom - last_odom) / dt;	
 					// Faz um measured_speed para ser um valor que varia entre 0 e 1000, uma porcentagem, assim como o speed/pid_speed.setpoint
 					//float scaled_measured_speed = (measured_speed / MAX_STEPS_PER_SECOND) * 1000.0f;
 
 					// 3. Calcular a saída do PID
-					// A saída é o comando de esfor�o para atingir o setpoint
+					// A saída é o comando de esforço para atingir o setpoint
 					pid_output_speed = PID_Update(&pid_speed, -filtered_speed, dt);
 				
 					// Atualiza variáveis para o próximo ciclo

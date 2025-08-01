@@ -47,7 +47,7 @@ typedef struct {			// �#pragma pack(1)� needed to get correct sizeof()
    int16_t  iSteer;
    uint8_t  wStateMaster;   // 1=ledGreen, 2=ledOrange, 4=ledRed, 8=ledUp, 16=ledDown   , 32=Battery3Led, 64=Disable, 128=ShutOff
    uint8_t  wStateSlave;   // 1=ledGreen, 2=ledOrange, 4=ledRed, 8=ledUp, 16=ledDown   , 32=Battery3Led, 64=Disable, 128=ShutOff
-	 float   Kp;
+   float   Kp;
    float   Ki;
    float   Kd;
    uint16_t checksum;
@@ -93,9 +93,9 @@ void RemoteUpdate(void)
 	// Ask for steer input
 	SerialHover2Server oData;
 	oData.cStart = START_FRAME;
-	oData.iVolt = (uint16_t)(speed * 0.02676f * 100);
-	oData.iAmpL = (int16_t) (filtered_speed*100);
-	oData.iSpeedL = (int16_t) (meanspeed*100);
+	oData.iVolt = (uint16_t)  (batteryVoltage*100);
+	oData.iAmpL = (int16_t)   (currentDC*100);
+	oData.iSpeedL = (int16_t) (filtered_speed*100);
 	//oData.iSpeedL = (int16_t) speed;		// for testing that uart received 
 	oData.iOdomL = (int32_t) iOdom;
 	
