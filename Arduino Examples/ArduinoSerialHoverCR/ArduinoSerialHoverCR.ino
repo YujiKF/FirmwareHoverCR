@@ -146,8 +146,8 @@ void loop() {
   if (Receive(SerialHover, oHoverFeedback)) {
     // Para não inundar, envia telemetria apenas a cada 100ms
     if (iNow - lastLogTime > 100) {
-      String feedbackString = "Tensão:" + String(oHoverFeedback.iVolt) + 
-                              " | Corrente:" + String(oHoverFeedback.iAmpL) + 
+      String feedbackString = "Tensão:" + String(oHoverFeedback.iVolt / 100.0, 2) + 
+                              " | Corrente:" + String(oHoverFeedback.iAmpL / 100.0, 2) + 
                               " | Setpoint:" + String(iSpeed * 0.02676f, 2) + " km/h"
                               " | Velocidade:" + String(oHoverFeedback.iSpeedL / 100.0, 2) + " km/h";
       
