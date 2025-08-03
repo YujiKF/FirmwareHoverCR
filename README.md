@@ -15,7 +15,7 @@ microcontrolador ESP32 conectado a ela via interface serial (UART).
 os dados da placa de potência e enviar através de um cabo USB para
 um computador, por bluetooth e para uma outra ESP32, utilizada
 no controle remoto, através do protoco de comunicação ESP-NOW.
-Também é possível encontrar o firmware desenvolvido [aqui.]([https://github.com/YujiKF/FirmwareHoverCR/tree/main/HoverBoardGigaDevice](https://github.com/YujiKF/FirmwareHoverCR/tree/main/Arduino%20Examples)
+Também é possível encontrar o firmware desenvolvido [aqui.](https://github.com/YujiKF/FirmwareHoverCR/tree/main/HoverboardSerialESP32)
 - Interface: É o controle remoto, isto é, a parte em que o usuário tem
 acesso, é uma placa ESP32 equipada com um encoder rotativo com
 botão, um display OLED, uma bateria interna com monitoração de
