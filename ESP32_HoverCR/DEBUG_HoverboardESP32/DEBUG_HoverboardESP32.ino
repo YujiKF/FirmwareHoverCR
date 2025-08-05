@@ -128,7 +128,7 @@ void setup() {
 // ====================================================================
 void loop() {
   unsigned long iNow = millis();
-  digitalWrite(LED_BUILTIN, (iNow % 1000) < 100); // Pisca rápido para mostrar que está a correr
+  digitalWrite(LED_BUILTIN, (iNow % 1000) < 100); // Pisca rápido para mostrar que está funcionando
 
   // 1. Verifica se chegaram comandos do PC (Monitor Serial)
   if (Serial.available() > 0) {
