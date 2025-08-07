@@ -25,7 +25,7 @@
 #define MODE_SWITCH_ECO_PIN   13
 #define MODE_SWITCH_SPORT_PIN 18
 
-// >>>>> NOVIDADE AQUI: Pino para leitura da bateria do controle <<<<<
+// Pino para leitura da bateria do controle 
 #define BAT_FEEDBACK_PIN 33 // Conforme o esquemático (BAT_FEEDBACK -> IO33)
 
 // --- CONFIGURAÇÕES DE COMUNICAÇÃO ESP-NOW ---
@@ -57,7 +57,7 @@ volatile bool encoderButtonPressed = false;
 float   current_kp = Kp_eco, current_ki = Ki_eco, current_kd = Kd_eco;
 unsigned long lastSendTime = 0, lastDisplayTime = 0, lastBatReadTime = 0;
 
-// >>>>> NOVIDADE AQUI: Variável para a bateria do controle <<<<<
+// Variável para a bateria do controle remoto
 float remote_battery_volt = 0.0;
 
 // --- FUNÇÕES DE CALLBACK (ESP-NOW) ---
