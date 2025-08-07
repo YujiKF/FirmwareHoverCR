@@ -93,7 +93,7 @@ void updateDisplay() {
   display.print("Modo: ");
   display.print(currentDriveMode == SPORT ? "ESPOR" : "ECO");
 
-  // >>>>> NOVIDADE AQUI: Exibe as duas baterias <<<<<
+  // Exibe as duas baterias 
   display.setCursor(68, 0); 
   display.print("HB:");
   display.print(incomingTelemetry.battery_volt, 1);
